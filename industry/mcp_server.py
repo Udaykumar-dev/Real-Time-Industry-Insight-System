@@ -22,7 +22,15 @@ from serpapi.google_search import GoogleSearch
 # ── Load env (resolve relative to this file so subprocess spawning works) ────
 _env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".env")
 load_dotenv(_env_path)
+
+# Prefer .env → fall back to Streamlit Cloud secrets
 SERP_KEY = os.getenv("SERP_API_KEY")
+if not SERP_KEY:
+    try:
+        import streamlit as st
+        SERP_KEY = st.secrets.get("SERP_API_KEY", "")
+    except Exception:
+        SERP_KEY = ""
 
 # ── FastMCP instance ────────────────────────────────────────────────────────
 mcp = FastMCP("Industry Intelligence Server")
